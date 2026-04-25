@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { jobService } from '../services/apiService';
 import { useNavigate } from 'react-router-dom';
-import { FiArrowLeft } from 'react-icons/fi';
+import BackButton from '../components/BackButton';
 import { ButtonLoader } from '../components/Loader';
 
 const AddJob = () => {
@@ -31,9 +31,7 @@ const AddJob = () => {
 
     return (
         <div className="fade-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
-            <button onClick={() => navigate('/jobs')} className="btn" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
-                <FiArrowLeft size={18} /> Back to List
-            </button>
+            <BackButton to="/jobs" label="Back to List" />
 
             <div className="glass-card" style={{ padding: '2.5rem' }}>
                 <h2 style={{ marginBottom: '2rem' }}>Add New Application</h2>

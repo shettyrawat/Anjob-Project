@@ -5,17 +5,19 @@ import { generateAIResponse } from '../config/fireworks.js';
  */
 export const calculateScore = async (text, role = 'General') => {
     try {
-        const prompt = `Analyze this resume for ATS compatibility for the role: ${role}.
+        const prompt = `Analyze this resume for industry-standard compatibility for the role: "${role}".
+        This role could be from ANY field (Healthcare, Engineering, Arts, Business, IT, etc.).
         Resume Text: ${text}
 
+        Your goal is to provide specific, professional feedback based on that role's industry standards.
         Return ONLY a JSON object:
         {
-            "atsScore": <0-100>,
-            "keywordScore": <0-100>,
-            "formattingScore": <0-100>,
-            "completenessScore": <0-100>,
-            "skills": ["Skill1", "Skill2"],
-            "suggestions": ["S1", "S2"]
+            "atsScore": <0-100 score based on how well the resume matches ${role} standards>,
+            "keywordScore": <0-100 score for industry-specific terminology>,
+            "formattingScore": <0-100 score for professional layout standards>,
+            "completenessScore": <0-100 score for missing essential sections like Certifications, Experience, etc.>,
+            "skills": ["Industry Skill 1", "Industry Skill 2"],
+            "suggestions": ["Specific improvement for ${role} industry", "Generic formatting improvement"]
         }`;
 
         const response = await generateAIResponse(prompt);
@@ -50,7 +52,8 @@ export const calculateScore = async (text, role = 'General') => {
  */
 export const generateOptimizedData = async (text, role = 'General') => {
     try {
-        const prompt = `Rewrite this resume into an ATS-optimized JSON for the role: "${role}".
+        const prompt = `Rewrite this resume into a professionally optimized JSON format for the role: "${role}". 
+        Respect the conventions of the specific industry (e.g., if it's medical, emphasize certifications; if it's creative, emphasize portfolio/projects).
         Resume Text: ${text}
 
         JSON Structure:
@@ -60,17 +63,17 @@ export const generateOptimizedData = async (text, role = 'General') => {
                 "email": "...", 
                 "phone": "...", 
                 "location": "...", 
-                "links": ["https://github.com/...", "https://linkedin.com/in/..."] 
+                "links": ["Portfolio/LinkedIn/Github links if relevant to the industry"] 
             },
-            "summary": "...",
+            "summary": "Professional summary/objective tailored to ${role}",
             "experience": [{ 
                 "role": "...", 
                 "company": "...", 
                 "duration": "...", 
-                "description": ["Accomplishment 1", "Accomplishment 2"] 
+                "description": ["Action-oriented accomplishment specific to the ${role} field"] 
             }],
             "education": [{ "degree": "...", "institution": "...", "duration": "..." }],
-            "skills": ["Skill 1", "Skill 2"]
+            "skills": ["Skill specific to ${role} industry", "Soft skill"]
         }
         Return ONLY valid JSON. Ensure "links", "description", and "skills" are arrays of simple strings.`;
 

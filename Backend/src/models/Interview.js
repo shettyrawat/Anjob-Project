@@ -46,5 +46,8 @@ const interviewSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// Add indexes for optimization
+interviewSchema.index({ user: 1 });
+
 const Interview = mongoose.model('Interview', interviewSchema);
 export default Interview;

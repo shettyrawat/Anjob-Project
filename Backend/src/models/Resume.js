@@ -45,5 +45,8 @@ const resumeSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// Add indexes for optimization
+resumeSchema.index({ user: 1 });
+
 const Resume = mongoose.model('Resume', resumeSchema);
 export default Resume;

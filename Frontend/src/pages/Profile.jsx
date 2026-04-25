@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useTranslation } from 'react-i18next';
 import { FiUser, FiMail, FiEdit2, FiCheck, FiX, FiLock, FiSend } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import BackButton from '../components/BackButton';
 import { ButtonLoader } from '../components/Loader';
 import { formatDate } from '../utils/dateUtils';
 
 const Profile = () => {
     const { user, updateProfile, requestOTP, resetPassword } = useAuth();
-    const { t } = useTranslation();
     const [username, setUsername] = useState(user?.username || '');
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -36,10 +36,10 @@ const Profile = () => {
         setLoading(true);
         try {
             await updateProfile(username);
-            setMessage({ type: 'success', text: t('profile.success') || 'Username updated successfully!' });
+            setMessage({ type: 'success', text: 'Username updated successfully!' });
             setIsEditing(false);
         } catch (err) {
-            setMessage({ type: 'error', text: err || t('profile.error') || 'Failed to update username' });
+            setMessage({ type: 'error', text: err || 'Failed to update username' });
         } finally {
             setLoading(false);
         }
@@ -85,7 +85,8 @@ const Profile = () => {
     if (!user) return <div className="loader">Loading...</div>;
 
     return (
-        <div className="container fade-in" style={{ maxWidth: '600px', margin: '4rem auto' }}>
+        <div className="container fade-in" style={{ maxWidth: '600px', margin: '2rem auto' }}>
+            <BackButton label="Back to Dashboard" to="/jobs" />
             <div className="glass-card" style={{ padding: '3rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '3rem' }}>
                     {user.profilePicture ? (
@@ -110,8 +111,8 @@ const Profile = () => {
                         </div>
                     )}
                     <div>
-                        <h2 style={{ margin: 0 }}>{t('profile.title') || 'Your Profile'}</h2>
-                        <p style={{ color: 'var(--text-secondary)', margin: '5px 0 0 0' }}>{t('profile.settings') || 'Manage your account settings'}</p>
+                        <h2 style={{ margin: 0 }}>Your Profile</h2>
+                        <p style={{ color: 'var(--text-secondary)', margin: '5px 0 0 0' }}>Manage your account settings</p>
                     </div>
                 </div>
 
@@ -125,7 +126,7 @@ const Profile = () => {
                     {/* Email Info */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                            <FiMail /> {t('profile.email') || 'Email Address'}
+                            <FiMail /> Email Address
                         </label>
                         <div style={{ padding: '14px', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', color: 'var(--text-secondary)', cursor: 'not-allowed' }}>
                             {user.email}
@@ -135,7 +136,7 @@ const Profile = () => {
                     {/* Username Update */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                            <FiUser /> {t('profile.username') || 'Username'}
+                            <FiUser /> Username
                         </label>
                         <div style={{ position: 'relative' }}>
                             {isEditing ? (
@@ -170,12 +171,12 @@ const Profile = () => {
                     <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
                         {!showPasswordForm ? (
                             <button onClick={() => setShowPasswordForm(true)} className="btn" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '14px' }}>
-                                <FiLock /> {t('profile.change_password') || 'Change Password'}
+                                <FiLock /> Change Password
                             </button>
                         ) : (
                             <div className="slide-down" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <h3 style={{ margin: 0, fontSize: '1.1rem' }}>{t('profile.change_password') || 'Change Password'}</h3>
+                                    <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Change Password</h3>
                                     <button onClick={() => { setShowPasswordForm(false); setOtpSent(false); }} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}><FiX size={20} /></button>
                                 </div>
 
@@ -239,7 +240,7 @@ const Profile = () => {
 
                 <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--glass-border)' }}>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                        {t('profile.joined') || 'Joined on'} {formatDate(user.createdAt)}
+                        Joined on {formatDate(user.createdAt)}
                     </p>
                 </div>
             </div>

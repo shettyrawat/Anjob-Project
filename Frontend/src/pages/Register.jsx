@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { GoogleLogin } from '@react-oauth/google';
 import { ButtonLoader } from '../components/Loader';
 
@@ -15,7 +14,6 @@ const Register = () => {
     const [loading, setLoading] = useState(false);
     const { register, verifyEmail, googleLogin } = useAuth();
     const navigate = useNavigate();
-    const { t } = useTranslation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -63,7 +61,7 @@ const Register = () => {
     return (
         <div className="glass-card fade-in" style={{ maxWidth: '400px', margin: '4rem auto', padding: '2.5rem' }}>
             <h2 style={{ marginBottom: '2rem', textAlign: 'center' }}>
-                {isVerifying ? 'Verify Email' : t('auth.register')}
+                {isVerifying ? 'Verify Email' : 'Register'}
             </h2>
 
             {error && <div style={{ color: 'var(--danger)', marginBottom: '1rem', textAlign: 'center', background: 'rgba(239, 68, 68, 0.1)', padding: '10px', borderRadius: '5px' }}>{error}</div>}
@@ -82,7 +80,7 @@ const Register = () => {
                         />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label>{t('auth.email')}</label>
+                        <label>Email</label>
                         <input
                             type="email"
                             value={email}
@@ -93,7 +91,7 @@ const Register = () => {
                         />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label>{t('auth.password')}</label>
+                        <label>Password</label>
                         <input
                             type="password"
                             value={password}
@@ -104,7 +102,7 @@ const Register = () => {
                         />
                     </div>
                     <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem', padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} disabled={loading}>
-                        {loading ? <><ButtonLoader /> Sending OTP...</> : t('auth.register')}
+                        {loading ? <><ButtonLoader /> Sending OTP...</> : 'Register'}
                     </button>
 
                     <div style={{ display: 'flex', alignItems: 'center', margin: '1rem 0', gap: '1rem' }}>
@@ -176,7 +174,7 @@ const Register = () => {
             )}
 
             <p style={{ marginTop: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                Already have an account? <Link to="/login" style={{ color: 'var(--accent)' }}>{t('auth.login')}</Link>
+                Already have an account? <Link to="/login" style={{ color: 'var(--accent)' }}>Login</Link>
             </p>
         </div>
     );

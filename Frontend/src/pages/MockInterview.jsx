@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { interviewService } from '../services/apiService';
-import { FiMessageSquare, FiMic, FiPlay, FiCheckCircle, FiArrowRight, FiUser, FiStar, FiSlash, FiLayers, FiMonitor, FiServer, FiCpu, FiShield, FiCloud, FiSmartphone, FiSearch, FiActivity, FiSettings } from 'react-icons/fi';
-import { SiReact, SiNodedotjs, SiPython, SiFigma } from 'react-icons/si';
-import { FaJava, FaInfinity, FaBrain } from 'react-icons/fa';
+import { FiMessageSquare, FiMic, FiPlay, FiCheckCircle, FiArrowRight, FiStar, FiSlash, FiSearch } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
-import Loader, { ButtonLoader } from '../components/Loader';
+import { useNavigate } from 'react-router-dom';
+import BackButton from '../components/BackButton';
+import { ButtonLoader } from '../components/Loader';
+
 
 const MockInterview = () => {
     const [session, setSession] = useState(null);
@@ -12,35 +13,46 @@ const MockInterview = () => {
     const [answer, setAnswer] = useState('');
     const [loading, setLoading] = useState(false);
     const [role, setRole] = useState('');
-    const [searchTerm, setSearchTerm] = useState('');
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [suggestions, setSuggestions] = useState([]);
     const [mode, setMode] = useState('text');
     const [isAdaptive, setIsAdaptive] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const recognitionRef = useRef(null);
     const scrollRef = useRef(null);
 
-    const roles = [
-        { id: 'fullstack', name: 'Full Stack Developer', icon: <FiLayers /> },
-        { id: 'frontend', name: 'Frontend Developer', icon: <FiMonitor /> },
-        { id: 'backend', name: 'Backend Developer', icon: <FiServer /> },
-        { id: 'react', name: 'React Developer', icon: <SiReact /> },
-        { id: 'node', name: 'Node.js Developer', icon: <SiNodedotjs /> },
-        { id: 'python', name: 'Python Developer', icon: <SiPython /> },
-        { id: 'java', name: 'Java Developer', icon: <FaJava /> },
-        { id: 'devops', name: 'DevOps Engineer', icon: <FaInfinity /> },
-        { id: 'datascience', name: 'Data Scientist', icon: <FaBrain /> },
-        { id: 'ai-ml', name: 'AI/ML Engineer', icon: <FiCpu /> },
-        { id: 'cybersecurity', name: 'Cyber Security', icon: <FiShield /> },
-        { id: 'cloud', name: 'Cloud Engineer', icon: <FiCloud /> },
-        { id: 'ui-ux', name: 'UI/UX Designer', icon: <SiFigma /> },
-        { id: 'mobile', name: 'Mobile App Developer', icon: <FiSmartphone /> },
-        { id: 'qa', name: 'QA Engineer', icon: <FiSearch /> },
-        { id: 'data-analyst', name: 'Data Analyst', icon: <FiActivity /> },
+    const rolePresets = [
+        // IT / Tech
+        'Software Engineer', 'Frontend Developer', 'Backend Developer', 'Full Stack Developer',
+        'React Developer', 'Node.js Developer', 'Python Developer', 'Java Developer',
+        'DevOps Engineer', 'Cloud Architect', 'Data Scientist', 'AI/ML Engineer',
+        'Cyber Security Analyst', 'UI/UX Designer', 'Mobile App Developer', 'QA Engineer',
+        // Medical / Healthcare
+        'Registered Nurse', 'Pharmacist', 'General Physician', 'Dentist', 'Medical Lab Technician',
+        'Radiologist', 'Therapist', 'Healthcare Administrator',
+        // Engineering / Construction
+        'Civil Engineer', 'Mechanical Engineer', 'Electrical Engineer', 'Site Engineer',
+        'Project Manager', 'Architect', 'Interior Designer', 'Structural Engineer',
+        // Business / Finance
+        'Accountant', 'Financial Analyst', 'Marketing Manager', 'Sales Executive',
+        'HR Manager', 'Business Analyst', 'Operations Manager', 'Bank Manager',
+        // Others
+        'Teacher', 'Chef', 'Hotel Manager', 'Content Writer', 'Graphic Designer',
+        'Customer Support', 'Lawyer', 'Data Analyst'
     ];
 
-    const filteredRoles = roles.filter(r =>
-        r.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    useEffect(() => {
+        if (role.trim().length > 0) {
+            const filtered = rolePresets.filter(r =>
+                r.toLowerCase().includes(role.toLowerCase())
+            ).slice(0, 5);
+            setSuggestions(filtered);
+            setShowSuggestions(filtered.length > 0);
+        } else {
+            setSuggestions([]);
+            setShowSuggestions(false);
+        }
+    }, [role]);
 
     // Speech-to-Text Setup
     useEffect(() => {
@@ -118,12 +130,12 @@ const MockInterview = () => {
     }, [session?.chatHistory]);
 
     const startSession = async () => {
-        if (!role) return;
+        if (!role.trim()) return;
         setLoading(true);
         try {
             const { data } = isAdaptive
-                ? await interviewService.startAdaptiveInterview({ role: roles.find(r => r.id === role)?.name, mode })
-                : await interviewService.startInterview({ role: roles.find(r => r.id === role)?.name, mode });
+                ? await interviewService.startAdaptiveInterview({ role, mode })
+                : await interviewService.startInterview({ role, mode });
             setSession(data);
             setCurrentIdx(0);
         } catch (err) {
@@ -177,6 +189,7 @@ const MockInterview = () => {
 
     return (
         <div className="fade-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
+            <BackButton to="/jobs" label="Back to Dashboard" />
             <h2 style={{ marginBottom: '2.5rem' }}>AI Mock Interview</h2>
 
             <AnimatePresence mode="wait">
@@ -186,21 +199,20 @@ const MockInterview = () => {
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
                         className="glass-card" style={{ padding: '3rem' }}
                     >
-                        <h3 style={{ marginBottom: '1.5rem' }}>Select your Role</h3>
+                        <h3 style={{ marginBottom: '1.5rem' }}>What role are you interviewing for?</h3>
 
-                        <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
+                        <div style={{ marginBottom: '2.5rem', position: 'relative' }}>
                             <FiSearch style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                             <input
                                 type="text"
-                                placeholder="Search roles or type custom role..."
-                                value={searchTerm}
-                                onChange={(e) => {
-                                    setSearchTerm(e.target.value);
-                                    setRole(''); // Clear selected role when searching
-                                }}
+                                placeholder="e.g. Software Engineer, Registered Nurse, Project Manager..."
+                                value={role}
+                                onChange={(e) => setRole(e.target.value)}
+                                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                                onFocus={() => role.trim().length > 0 && setShowSuggestions(true)}
                                 style={{
                                     width: '100%',
-                                    padding: '0.8rem 1rem 0.8rem 2.8rem',
+                                    padding: '1rem 1rem 1rem 2.8rem',
                                     borderRadius: '12px',
                                     border: '1px solid var(--glass-border)',
                                     background: 'var(--bg-primary)',
@@ -208,40 +220,50 @@ const MockInterview = () => {
                                     fontSize: '1rem'
                                 }}
                             />
-                        </div>
 
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                            gap: '1rem',
-                            marginBottom: '1rem',
-                            maxHeight: '320px',
-                            overflowY: 'auto',
-                            padding: '0.5rem',
-                            borderRadius: '12px',
-                            background: 'rgba(255, 255, 255, 0.03)'
-                        }}>
-                            {filteredRoles.map(r => (
-                                <div
-                                    key={r.id}
-                                    onClick={() => {
-                                        setRole(r.id);
-                                        setSearchTerm(r.name);
-                                    }}
-                                    style={{
-                                        padding: '1.5rem',
-                                        borderRadius: '16px',
-                                        border: role === r.id ? '2px solid var(--accent)' : '1px solid var(--glass-border)',
-                                        background: role === r.id ? 'var(--bg-primary)' : 'transparent',
-                                        cursor: 'pointer',
-                                        textAlign: 'center',
-                                        transition: 'all 0.2s ease'
-                                    }}
-                                >
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '0.8rem', color: role === r.id ? 'var(--accent)' : 'var(--text-secondary)' }}>{r.icon}</div>
-                                    <div style={{ fontWeight: '500', fontSize: '0.9rem' }}>{r.name}</div>
-                                </div>
-                            ))}
+                            {/* Auto-suggestions Dropdown */}
+                            <AnimatePresence>
+                                {showSuggestions && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '110%',
+                                            left: 0, right: 0,
+                                            background: 'var(--bg-secondary)',
+                                            border: '1px solid var(--glass-border)',
+                                            borderRadius: '12px',
+                                            zIndex: 100,
+                                            boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+                                            overflow: 'hidden'
+                                        }}
+                                    >
+                                        {suggestions.map((s, i) => (
+                                            <div
+                                                key={i}
+                                                onClick={() => {
+                                                    setRole(s);
+                                                    setShowSuggestions(false);
+                                                }}
+                                                style={{
+                                                    padding: '12px 16px',
+                                                    cursor: 'pointer',
+                                                    borderBottom: i === suggestions.length - 1 ? 'none' : '1px solid var(--glass-border)',
+                                                    textAlign: 'left',
+                                                    transition: 'background 0.2s ease',
+                                                    fontSize: '0.95rem'
+                                                }}
+                                                onMouseEnter={(e) => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                                                onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                                            >
+                                                {s}
+                                            </div>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
 
 

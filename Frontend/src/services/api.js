@@ -23,9 +23,9 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            // Optional: Logout user if token expires
-            // localStorage.removeItem('user');
-            // window.location.href = '/login';
+            // Auto logout user if token expires or is invalid
+            localStorage.removeItem('user');
+            window.location.href = '/login';
         }
         // Return the error message if present, otherwise the error object
         const errorMessage = error.response?.data?.message || error.message || 'Something went wrong';

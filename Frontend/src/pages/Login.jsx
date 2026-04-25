@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { GoogleLogin } from '@react-oauth/google';
 import { ButtonLoader } from '../components/Loader';
 
@@ -16,7 +15,6 @@ const Login = () => {
     const [isOTPMode, setIsOTPMode] = useState(false);
     const { login, verifyLogin, verifyEmail, resendOTP, googleLogin, requestLoginOTP } = useAuth();
     const navigate = useNavigate();
-    const { t } = useTranslation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -100,7 +98,7 @@ const Login = () => {
     return (
         <div className="glass-card fade-in" style={{ maxWidth: '400px', margin: '4rem auto', padding: '2.5rem' }}>
             <h2 style={{ marginBottom: '2rem', textAlign: 'center' }}>
-                {isVerifying ? 'Verify OTP' : (isOTPMode ? 'OTP Login' : t('auth.login'))}
+                {isVerifying ? 'Verify OTP' : (isOTPMode ? 'OTP Login' : 'Login')}
             </h2>
             {error && <div style={{ color: error.includes('success') || error.includes('sent') ? 'var(--accent)' : 'var(--danger)', marginBottom: '1rem', textAlign: 'center', background: error.includes('success') || error.includes('sent') ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', padding: '10px', borderRadius: '5px' }}>{error}</div>}
 
@@ -120,7 +118,7 @@ const Login = () => {
                     {!isOTPMode && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <label>{t('auth.password')}</label>
+                                <label>Password</label>
                                 <button
                                     type="button"
                                     onClick={() => setIsOTPMode(true)}
@@ -139,7 +137,7 @@ const Login = () => {
                         </div>
                     )}
                     <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem', padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} disabled={loading}>
-                        {loading ? <><ButtonLoader /> Processing...</> : (isOTPMode ? 'Send Verification Code' : t('auth.login'))}
+                        {loading ? <><ButtonLoader /> Processing...</> : (isOTPMode ? 'Send Verification Code' : 'Login')}
                     </button>
 
                     {isOTPMode && (
@@ -230,7 +228,7 @@ const Login = () => {
             )}
 
             <p style={{ marginTop: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                Don't have an account? <Link to="/register" style={{ color: 'var(--accent)' }}>{t('auth.register')}</Link>
+                Don't have an account? <Link to="/register" style={{ color: 'var(--accent)' }}>Register</Link>
             </p>
         </div>
     );

@@ -1,11 +1,2 @@
 node_modules/
 .env
-*.log
-error_detailed.log
-error_trace.txt
-logic-output.txt
-model_list.json
-dist/
-.vscode/
-.idea/
-.DS_Store

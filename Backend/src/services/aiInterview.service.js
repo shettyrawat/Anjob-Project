@@ -6,8 +6,10 @@ import { generateAIResponse } from '../config/fireworks.js';
 
 export const getQuestions = async (role) => {
     try {
-        const prompt = `Generate a list of 5 most important and common interview questions for a ${role} position. 
-    The questions should cover technical aspects, problem-solving, and soft skills.
+        const prompt = `Generate a list of 5 most important and common interview questions for the role: "${role}".
+    This role could be from ANY industry (e.g., Healthcare, Construction, Finance, Education, or IT).
+    Ensure the questions are professionally tailored to the specific standards and challenges of this field.
+    The questions should cover essential skills, problem-solving, and situational judgment.
     Return the response as a simple JSON array of strings ONLY. 
     Example: ["Question 1", "Question 2", ...]`;
 
@@ -27,10 +29,10 @@ export const getQuestions = async (role) => {
  */
 export const getNextAdaptiveQuestion = async (role, history) => {
     try {
-        const prompt = `You are an expert technical interviewer for a ${role} position.
+        const prompt = `You are an expert industry interviewer for the role: "${role}".
         Based on the conversation history below, either:
         1. Ask a follow-up question if the last answer was incomplete or interesting.
-        2. Move to a new technical topic if the last topic is covered.
+        2. Move to a new relevant topic if the current one is sufficiently covered.
         3. If you've asked around 5-7 questions and feel you have enough info, say "INTERVIEW_COMPLETE".
 
         Current History: ${JSON.stringify(history.map(h => ({ role: h.role, content: h.content })))}
@@ -51,9 +53,9 @@ export const getNextAdaptiveQuestion = async (role, history) => {
     }
 };
 
-export const evaluateAnswer = async (question, answer) => {
+export const evaluateAnswer = async (role, question, answer) => {
     try {
-        const prompt = `As an expert technical interviewer, evaluate the following answer.
+        const prompt = `As an expert industry interviewer, evaluate the following answer for the role of ${role}.
         Question: ${question}
         Candidate's Answer: ${answer}
 
@@ -67,8 +69,9 @@ export const evaluateAnswer = async (question, answer) => {
         The feedback should be professional and encouraging.`;
 
         const response = await generateAIResponse(prompt);
-        const cleanedResponse = response.replace(/```json|```/g, '').trim();
-        return JSON.parse(cleanedResponse);
+        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) throw new Error('Invalid AI response: No JSON object found');
+        return JSON.parse(jsonMatch[0]);
     } catch (error) {
         console.error('Error evaluating answer with Fireworks AI:', error);
         return {

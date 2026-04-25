@@ -35,7 +35,7 @@ export const submitAnswer = async (req, res, next) => {
         }
 
         const questionObj = interview.questions[questionIndex];
-        const evaluation = await evaluateAnswer(questionObj.question, answer);
+        const evaluation = await evaluateAnswer(interview.role, questionObj.question, answer);
 
         questionObj.answer = answer;
         questionObj.score = evaluation.score;
@@ -99,7 +99,7 @@ export const submitAdaptiveAnswer = async (req, res, next) => {
         const lastAIIdx = [...interview.chatHistory].reverse().findIndex(h => h.role === 'assistant');
         const currentQuestion = interview.chatHistory[interview.chatHistory.length - 1 - lastAIIdx].content;
 
-        const evaluation = await evaluateAnswer(currentQuestion, answer);
+        const evaluation = await evaluateAnswer(interview.role, currentQuestion, answer);
 
         interview.chatHistory.push({ role: 'user', content: answer });
 

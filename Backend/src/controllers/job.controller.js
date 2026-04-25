@@ -5,7 +5,7 @@ import Job from '../models/Job.js';
 // @access  Private
 export const getJobs = async (req, res, next) => {
     try {
-        const jobs = await Job.find({ user: req.user.id });
+        const jobs = await Job.find({ user: req.user.id }).sort({ createdAt: -1 });
         res.json(jobs);
     } catch (error) {
         next(error);
