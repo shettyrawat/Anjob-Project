@@ -16,7 +16,7 @@ const Navbar = () => {
     return (
         <nav className="glass-card" style={{ margin: '1rem', padding: '0.8rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: '1rem', zIndex: 100 }}>
             <Link to="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--accent)' }}>
-                Anjob 🚀
+                Anjob 
             </Link>
 
             <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
