@@ -13,8 +13,8 @@ const app = express();
 
 // Middleware
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+  crossOriginResourcePolicy: false,
+  crossOriginOpenerPolicy: false
 }));
 app.use(cors());
 app.use(express.json());
